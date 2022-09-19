@@ -31,6 +31,11 @@ class DrawingBoard {
       "input",
       this.onChangeBrushSize.bind(this)
     );
+    this.colorPickerEl.addEventListener("input", this.onChangeColor.bind(this));
+  }
+
+  onChangeColor(e) {
+    this.brushSizePreviewEl.style.background = e.target.value;
   }
 
   onChangeBrushSize(e) {
