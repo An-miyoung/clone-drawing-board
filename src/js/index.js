@@ -13,6 +13,7 @@ class DrawingBoard {
     this.canvasEl = this.containerEl.querySelector("#canvas");
     this.toolbarEl = this.containerEl.querySelector("#toolbar");
     this.brushEl = this.containerEl.querySelector("#brush");
+    this.colorPickerEl = this.toolbarEl.querySelector("#colorPicker");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
@@ -51,7 +52,7 @@ class DrawingBoard {
     this.context.beginPath();
     this.context.moveTo(currentPosition.x, currentPosition.y);
     this.context.lineCap = "round";
-    this.context.strokeStyle = "#000000";
+    this.context.strokeStyle = this.colorPickerEl.value;
     this.context.lineWidth = 10;
     // this.context.lineTo(400, 400);
     // this.context.stroke();
