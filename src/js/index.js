@@ -14,6 +14,10 @@ class DrawingBoard {
     this.toolbarEl = this.containerEl.querySelector("#toolbar");
     this.brushEl = this.containerEl.querySelector("#brush");
     this.colorPickerEl = this.toolbarEl.querySelector("#colorPicker");
+    this.brushPanelEl = this.containerEl.querySelector("#brushPanel");
+    this.brushSliderEl = this.brushPanelEl.querySelector("#brushSize");
+    this.brushSizePreviewEl =
+      this.brushPanelEl.querySelector("#brushSizePreview");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
@@ -23,6 +27,15 @@ class DrawingBoard {
     this.canvasEl.addEventListener("mousedown", this.onMouseDown.bind(this));
     this.canvasEl.addEventListener("mousemove", this.onMouseMove.bind(this));
     this.canvasEl.addEventListener("mouseup", this.onMouseUp.bind(this));
+    this.brushSliderEl.addEventListener(
+      "input",
+      this.onChangeBrushSize.bind(this)
+    );
+  }
+
+  onChangeBrushSize(e) {
+    this.brushSizePreviewEl.style.width = `${e.target.value}px`;
+    this.brushSizePreviewEl.style.height = `${e.target.value}px`;
   }
 
   onClickBrush(e) {
@@ -31,6 +44,7 @@ class DrawingBoard {
     this.MODE = isActive ? "NONE" : "BRUSH";
     this.canvasEl.style.cursor = isActive ? "default" : "crosshair";
     this.brushEl.classList.toggle("active");
+    this.brushPanelEl.classList.toggle("hide");
   }
 
   onMouseMove(e) {
@@ -53,7 +67,7 @@ class DrawingBoard {
     this.context.moveTo(currentPosition.x, currentPosition.y);
     this.context.lineCap = "round";
     this.context.strokeStyle = this.colorPickerEl.value;
-    this.context.lineWidth = 10;
+    this.context.lineWidth = this.brushSliderEl.value;
     // this.context.lineTo(400, 400);
     // this.context.stroke();
   }
