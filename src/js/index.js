@@ -30,6 +30,7 @@ class DrawingBoard {
       this.navigatorImageContainerEl.querySelector("#canvasImg");
     this.unDoEl = this.toolbarEl.querySelector("#undo");
     this.clearEl = this.toolbarEl.querySelector("#clear");
+    this.downloadLinkEl = this.toolbarEl.querySelector("#download");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
@@ -56,6 +57,19 @@ class DrawingBoard {
     );
     this.unDoEl.addEventListener("click", this.onClickUnDo.bind(this));
     this.clearEl.addEventListener("click", this.onClickClear.bind(this));
+    this.downloadLinkEl.addEventListener(
+      "click",
+      this.onClickDownload.bind(this)
+    );
+  }
+
+  onClickDownload(e) {
+    e.currentTarget.classList.toggle("active");
+    // download 를 a tag 로 만들어서 href 로 저장될 데이터를 지정할 수 있게 한다.
+    // 저장될 이미지를 jpg 파일로 저장하고 퀄리티는 1로 지정
+    this.downloadLinkEl.href = this.canvasEl.toDataURL("image/jpg", 1);
+    // 저장될 이미지의 파일명을 지정해 준다.
+    this.downloadLinkEl.download = "my_drawing.jpg";
   }
 
   onClickClear(e) {
