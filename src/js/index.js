@@ -22,6 +22,10 @@ class DrawingBoard {
     this.brushSizePreviewEl =
       this.brushPanelEl.querySelector("#brushSizePreview");
     this.eraserEl = this.toolbarEl.querySelector("#eraser");
+    this.navigaterEl = this.toolbarEl.querySelector("#navigator");
+    this.navigatorImageContainerEl = this.containerEl.querySelector("#imgNav");
+    this.navigatorImageEl =
+      this.navigatorImageContainerEl.querySelector("#canvasImg");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
@@ -42,6 +46,20 @@ class DrawingBoard {
     );
     this.colorPickerEl.addEventListener("input", this.onChangeColor.bind(this));
     this.eraserEl.addEventListener("click", this.onClickEraser.bind(this));
+    this.navigaterEl.addEventListener(
+      "click",
+      this.onClickNavigator.bind(this)
+    );
+  }
+
+  updateNavigator() {
+    this.navigatorImageEl.src = this.canvasEl.toDataURL();
+  }
+
+  onClickNavigator(e) {
+    e.currentTarget.classList.toggle("active");
+    this.navigatorImageContainerEl.classList.toggle("hide");
+    this.updateNavigator();
   }
 
   onClickEraser(e) {
@@ -50,12 +68,8 @@ class DrawingBoard {
     this.canvasEl.style.cursor = isActive ? "default" : "crosshair";
     this.brushEl.classList.remove("active");
     this.brushPanelEl.classList.add("hide");
-    this.eraserEl.classList.toggle("active");
+    e.currentTarget.classList.toggle("active");
     //TODO: 지우개를 누르면 지우개의 굵기를 지정할 패널이 열리게 하기 위해
-
-    // this.brushPanelEl.classList.toggle("hide");
-    // this.brushSliderEl.value = 10;
-    // this.brushSizePreviewEl.style.background = this.eraserColor;
   }
 
   onChangeColor(e) {
@@ -72,7 +86,7 @@ class DrawingBoard {
     const isActive = e.currentTarget.classList.contains("active");
     this.MODE = isActive ? "NONE" : "BRUSH";
     this.canvasEl.style.cursor = isActive ? "default" : "crosshair";
-    this.brushEl.classList.toggle("active");
+    e.currentTarget.classList.toggle("active");
     this.brushPanelEl.classList.toggle("hide");
     this.eraserEl.classList.remove("active");
   }
@@ -80,6 +94,7 @@ class DrawingBoard {
   onMouseOut() {
     if (this.Mode === "NONE") return;
     this.IsMouseDown = false;
+    this.updateNavigator();
   }
 
   onMouseMove(e) {
@@ -92,6 +107,7 @@ class DrawingBoard {
   onMouseUp() {
     if (this.MODE === "NONE") return;
     this.IsMouseDown = false;
+    this.updateNavigator();
   }
 
   onMouseDown(e) {
