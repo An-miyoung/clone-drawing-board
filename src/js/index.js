@@ -69,6 +69,7 @@ class DrawingBoard {
   onClickUnDo(e) {
     if (this.undoArray.length === 0) {
       alert("실행취소 할 수 없습니다.");
+      return;
     }
     e.currentTarget.classList.toggle("active");
     let previousDataUrl = this.undoArray.pop();
@@ -101,7 +102,7 @@ class DrawingBoard {
   }
 
   updateNavigator() {
-    if (!this.IsNavigatorVisible) return;
+    if (!this.isNavigatorVisible) return;
     this.navigatorImageEl.src = this.canvasEl.toDataURL();
   }
 
