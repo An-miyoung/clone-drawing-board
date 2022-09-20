@@ -55,6 +55,15 @@ class DrawingBoard {
       this.onClickNavigator.bind(this)
     );
     this.unDoEl.addEventListener("click", this.onClickUnDo.bind(this));
+    this.clearEl.addEventListener("click", this.onClickClear.bind(this));
+  }
+
+  onClickClear(e) {
+    e.currentTarget.classList.toggle("active");
+    this.context.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+    this.undoArray = [];
+    this.updateNavigator();
+    this.initCanvasBackground();
   }
 
   onClickUnDo(e) {
