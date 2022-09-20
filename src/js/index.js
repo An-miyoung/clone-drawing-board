@@ -3,6 +3,7 @@ class DrawingBoard {
   IsMouseDown = false;
   eraserColor = "#FFFFFF";
   backgroundColor = "#FFFFFF";
+  isNavigatorVisible = false;
 
   constructor() {
     this.assignElement();
@@ -53,10 +54,14 @@ class DrawingBoard {
   }
 
   updateNavigator() {
+    if (!this.IsNavigatorVisible) return;
     this.navigatorImageEl.src = this.canvasEl.toDataURL();
   }
 
   onClickNavigator(e) {
+    // isNavigatorVisible 이 toggle 되도록 하기 위해서
+    this.isNavigatorVisible = !e.currentTarget.classList.contains("active");
+    console.log(this.isNavigatorVisible);
     e.currentTarget.classList.toggle("active");
     this.navigatorImageContainerEl.classList.toggle("hide");
     this.updateNavigator();
