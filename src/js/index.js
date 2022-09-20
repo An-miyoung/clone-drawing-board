@@ -1,10 +1,13 @@
 class DrawingBoard {
   MODE = "NONE";
   IsMouseDown = false;
+  eraserColor = "#FFFFFF";
+  backgroundColor = "#FFFFFF";
 
   constructor() {
     this.assignElement();
     this.initContext();
+    this.initCanvasBackground();
     this.addEvent();
   }
 
@@ -18,20 +21,41 @@ class DrawingBoard {
     this.brushSliderEl = this.brushPanelEl.querySelector("#brushSize");
     this.brushSizePreviewEl =
       this.brushPanelEl.querySelector("#brushSizePreview");
+    this.eraserEl = this.toolbarEl.querySelector("#eraser");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
+  }
+  initCanvasBackground() {
+    this.context.fillStyle = this.backgroundColor;
+    this.context.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
   }
   addEvent() {
     this.brushEl.addEventListener("click", this.onClickBrush.bind(this));
     this.canvasEl.addEventListener("mousedown", this.onMouseDown.bind(this));
     this.canvasEl.addEventListener("mousemove", this.onMouseMove.bind(this));
     this.canvasEl.addEventListener("mouseup", this.onMouseUp.bind(this));
+    this.canvasEl.addEventListener("mouseout", this.onMouseOut.bind(this));
     this.brushSliderEl.addEventListener(
       "input",
       this.onChangeBrushSize.bind(this)
     );
     this.colorPickerEl.addEventListener("input", this.onChangeColor.bind(this));
+    this.eraserEl.addEventListener("click", this.onClickEraser.bind(this));
+  }
+
+  onClickEraser(e) {
+    const isActive = e.currentTarget.classList.contains("active");
+    this.MODE = isActive ? "NONE" : "ERASER";
+    this.canvasEl.style.cursor = isActive ? "default" : "crosshair";
+    this.brushEl.classList.remove("active");
+    this.brushPanelEl.classList.add("hide");
+    this.eraserEl.classList.toggle("active");
+    //TODO: 지우개를 누르면 지우개의 굵기를 지정할 패널이 열리게 하기 위해
+
+    // this.brushPanelEl.classList.toggle("hide");
+    // this.brushSliderEl.value = 10;
+    // this.brushSizePreviewEl.style.background = this.eraserColor;
   }
 
   onChangeColor(e) {
@@ -50,6 +74,12 @@ class DrawingBoard {
     this.canvasEl.style.cursor = isActive ? "default" : "crosshair";
     this.brushEl.classList.toggle("active");
     this.brushPanelEl.classList.toggle("hide");
+    this.eraserEl.classList.remove("active");
+  }
+
+  onMouseOut() {
+    if (this.Mode === "NONE") return;
+    this.IsMouseDown = false;
   }
 
   onMouseMove(e) {
@@ -71,10 +101,10 @@ class DrawingBoard {
     this.context.beginPath();
     this.context.moveTo(currentPosition.x, currentPosition.y);
     this.context.lineCap = "round";
-    this.context.strokeStyle = this.colorPickerEl.value;
+
+    this.context.strokeStyle =
+      this.MODE === "BRUSH" ? this.colorPickerEl.value : this.eraserColor;
     this.context.lineWidth = this.brushSliderEl.value;
-    // this.context.lineTo(400, 400);
-    // this.context.stroke();
   }
 
   getMousePosition(e) {
