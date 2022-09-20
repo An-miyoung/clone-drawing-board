@@ -4,6 +4,7 @@ class DrawingBoard {
   eraserColor = "#FFFFFF";
   backgroundColor = "#FFFFFF";
   isNavigatorVisible = false;
+  undoArray = [];
 
   constructor() {
     this.assignElement();
@@ -27,6 +28,8 @@ class DrawingBoard {
     this.navigatorImageContainerEl = this.containerEl.querySelector("#imgNav");
     this.navigatorImageEl =
       this.navigatorImageContainerEl.querySelector("#canvasImg");
+    this.unDoEl = this.toolbarEl.querySelector("#undo");
+    this.clearEl = this.toolbarEl.querySelector("#clear");
   }
   initContext() {
     this.context = this.canvasEl.getContext("2d");
@@ -51,6 +54,41 @@ class DrawingBoard {
       "click",
       this.onClickNavigator.bind(this)
     );
+    this.unDoEl.addEventListener("click", this.onClickUnDo.bind(this));
+  }
+
+  onClickUnDo(e) {
+    if (this.undoArray.length === 0) {
+      alert("실행취소 할 수 없습니다.");
+    }
+    e.currentTarget.classList.toggle("active");
+    let previousDataUrl = this.undoArray.pop();
+    let previousImage = new Image();
+    previousImage.onload = () => {
+      this.context.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+      this.context.drawImage(
+        previousImage,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height
+      );
+    };
+    previousImage.src = previousDataUrl;
+  }
+
+  saveState() {
+    if (this.undoArray.length > 4) {
+      // 제일 앞에 있는 화면 URL 을 빼준다.
+      this.undoArray.shift();
+      this.undoArray.push(this.canvasEl.toDataURL());
+    } else {
+      this.undoArray.push(this.canvasEl.toDataURL());
+    }
   }
 
   updateNavigator() {
@@ -61,7 +99,6 @@ class DrawingBoard {
   onClickNavigator(e) {
     // isNavigatorVisible 이 toggle 되도록 하기 위해서
     this.isNavigatorVisible = !e.currentTarget.classList.contains("active");
-    console.log(this.isNavigatorVisible);
     e.currentTarget.classList.toggle("active");
     this.navigatorImageContainerEl.classList.toggle("hide");
     this.updateNavigator();
@@ -126,6 +163,8 @@ class DrawingBoard {
     this.context.strokeStyle =
       this.MODE === "BRUSH" ? this.colorPickerEl.value : this.eraserColor;
     this.context.lineWidth = this.brushSliderEl.value;
+
+    this.saveState();
   }
 
   getMousePosition(e) {
